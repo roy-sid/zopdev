@@ -1,6 +1,7 @@
 import yaml
 import os
 import google.generativeai as genai
+
 # -------------------------
 # Rule-based Analyzer
 # -------------------------
@@ -56,20 +57,26 @@ def compute_score(report):
     return score
 
 # -------------------------
-# LLM-based Suggestion Mode
+# LLM-based Suggestion Mode (Optional)
 # -------------------------
 def llm_suggestions(yaml_str: str):
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        return "(AI suggestions disabled: No GOOGLE_API_KEY found)"
     try:
-        genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+        genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(f"Suggest Kubernetes best practices for this config:\n{yaml_str}")
         return response.text
     except Exception as e:
         return f"(LLM suggestions unavailable: {str(e)})"
+
 # -------------------------
 # Main
 # -------------------------
 if __name__ == "__main__":
+    os.makedirs("outputs", exist_ok=True)
+
     with open("values.yaml") as f:
         values = yaml.safe_load(f)
 
@@ -82,7 +89,7 @@ if __name__ == "__main__":
     # Compute score
     score = compute_score(report)
 
-    # LLM suggestions
+    # LLM suggestions (optional)
     with open("values.yaml") as f:
         raw_yaml = f.read()
     suggestions = llm_suggestions(raw_yaml)

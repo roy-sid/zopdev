@@ -1,12 +1,21 @@
 import yaml
-from analyzer import analyze_and_optimize
+from analyzer import analyze_values, compute_score, llm_suggestions
+import os
 
 # Load sample values.yaml
 with open("values.yaml", "r") as f:
     values = yaml.safe_load(f)
 
 # Run analysis
-optimized, report = analyze_and_optimize(values)
+optimized, report = analyze_values(values)
+
+# Compute score
+health_score = compute_score(report)
+
+# AI suggestions (optional, only if GOOGLE_API_KEY is set)
+with open("values.yaml", "r") as f:
+    raw_yaml = f.read()
+ai_suggestions = llm_suggestions(raw_yaml)
 
 # Print results to console
 print("\n--- REPORT ---")
@@ -20,16 +29,22 @@ print(yaml.dump(optimized, sort_keys=False))
 with open("optimized_values.yaml", "w", encoding="utf-8") as f:
     yaml.dump(optimized, f, sort_keys=False, allow_unicode=True)
 
-# Save report
+# Save text report
 with open("analysis_report.txt", "w", encoding="utf-8") as f:
     f.write("ZopAI Config Optimizer Report\n")
     f.write("="*40 + "\n\n")
+    f.write(f"Config Health Score: {health_score}/100\n\n")
     for line in report:
         f.write(line + "\n")
-
+    f.write("\n---\n\n")
+    f.write("AI-based Suggestions:\n")
+    f.write(ai_suggestions + "\n")
 
 print("\n Files generated: optimized_values.yaml, analysis_report.txt")
 
+# -------------------------
+# PDF Report
+# -------------------------
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
@@ -85,3 +100,12 @@ def generate_pdf_report(output_path, health_score, warnings, ai_suggestions, opt
     doc.build(elements)
     print(f"✅ PDF report saved to {output_path}")
 
+
+# Generate PDF
+generate_pdf_report(
+    "analysis_report.pdf",
+    health_score,
+    report,
+    ai_suggestions,
+    yaml.dump(optimized, sort_keys=False)
+)
