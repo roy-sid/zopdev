@@ -2,9 +2,13 @@ name: CI - ZopAI Config Optimizer
 
 on:
   push:
+    paths:
+      - 'agents/zopai-config-optimizer/**'
     branches:
       - main
   pull_request:
+    paths:
+      - 'agents/zopai-config-optimizer/**'
     branches:
       - main
   workflow_dispatch:
