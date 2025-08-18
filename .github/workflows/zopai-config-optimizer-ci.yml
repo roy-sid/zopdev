@@ -1,14 +1,13 @@
-mkdir -p .github/workflows
-nano .github/workflows/zopai-config-optimizer-ci.yml
 name: CI - ZopAI Config Optimizer
 
 on:
   push:
-    paths:
-      - 'agents/zopai-config-optimizer/**'
+    branches:
+      - main
   pull_request:
-    paths:
-      - 'agents/zopai-config-optimizer/**'
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build-test:
