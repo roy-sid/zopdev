@@ -54,6 +54,11 @@ zopai-config-optimizer/
 │   ├── analysis_report.txt
 │   ├── analysis_report.pdf
 │   └── analysis_report.html
+├── screenshots/            # Documentation screenshots
+│   ├── docker_ps.png
+│   ├── html_report.png
+│   ├── pdf_report.png
+│   └── swagger_ui.png
 ├── requirements.txt        # Python dependencies
 ├── Dockerfile              # Container configuration
 ├── .dockerignore          # Docker build exclusions
@@ -80,7 +85,49 @@ python test_analyzer.py
 - `optimized_values.yaml` - Auto-corrected configuration
 - `analysis_report.txt` - Detailed analysis summary
 
-### 🌐 **API Mode**
+---
+
+## 🤖 Enable AI Recommendations
+
+To activate AI-based suggestions in ZopAI Config Optimizer, follow these steps:
+
+### 1. Set your Google API Key
+
+Set your Google API Key in the terminal before running the server:
+
+**Linux/macOS:**
+```bash
+export GOOGLE_API_KEY=YOUR_KEY_HERE
+```
+
+**Windows CMD:**
+```cmd
+set GOOGLE_API_KEY=YOUR_KEY_HERE
+```
+
+**Windows PowerShell:**
+```powershell
+$env:GOOGLE_API_KEY="YOUR_KEY_HERE"
+```
+
+### 2. Start the FastAPI server:
+```bash
+uvicorn zopai_api:app --reload
+```
+
+### 3. Open Swagger UI in your browser:
+```
+http://127.0.0.1:8000/docs
+```
+
+### 4. Test the endpoints
+Upload your `values.yaml` or send JSON. AI recommendations will now appear in the response.
+
+⚠️ **Important Note:** If the `GOOGLE_API_KEY` is not set, AI suggestions will be disabled, but all other optimization features will still work.
+
+---
+
+## 🌐 **API Mode**
 
 ```bash
 # Start the FastAPI server
@@ -98,6 +145,20 @@ uvicorn zopai_api:app --reload
 | `GET` | `/download/report` | Download text report |
 | `GET` | `/download/pdf` | Download PDF report |
 | `GET` | `/download/html` | Download HTML report |
+
+### 📝 **API Usage Example**
+
+```bash
+# Upload and analyze values.yaml file
+curl -X POST "http://127.0.0.1:8000/analyze" \
+     -F "file=@values.yaml"
+
+# Download optimized configuration
+curl -X GET "http://127.0.0.1:8000/download/optimized" \
+     -o optimized_values.yaml
+```
+
+---
 
 ### 🐳 **Docker Deployment**
 
@@ -126,7 +187,7 @@ kubectl apply -f k8s/service.yaml
 
 ---
 
-##  Example Analysis
+## 💡 Example Analysis
 
 ### **Input** (`values.yaml`)
 ```yaml
@@ -201,12 +262,11 @@ export GOOGLE_API_KEY="your-gemini-api-key"
 - **Penalty:** -10 points per detected warning
 - **Minimum:** 0 points
 
----
-
-📂 **Outputs** → [outputs/](outputs/)  
+## 📂 **Outputs** → [outputs/](outputs/)  
 Contains all optimized values and generated reports (HTML + PDF)
 
 ---
+
 ## 📸 Screenshots
 
 ### Docker Containers
@@ -219,7 +279,7 @@ Contains all optimized values and generated reports (HTML + PDF)
 ![PDF Report](screenshots/pdf_report.png)
 
 ### Swagger UI
-![Swagger UI](screenshots/swagger_ui.png)`
+![Swagger UI](screenshots/swagger_ui.png)
 
 ---
 
@@ -285,6 +345,4 @@ This project is part of **Zopdev Summer of Code 2025** and follows the program's
 
 ---
 
-
----
 ✅ Integrated with Zopdev platform (Summer of Code 2025)
