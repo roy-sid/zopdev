@@ -1,0 +1,35 @@
+mkdir -p .github/workflows
+nano .github/workflows/zopai-config-optimizer-ci.yml
+name: CI - ZopAI Config Optimizer
+
+on:
+  push:
+    paths:
+      - 'agents/zopai-config-optimizer/**'
+  pull_request:
+    paths:
+      - 'agents/zopai-config-optimizer/**'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          cd agents/zopai-config-optimizer
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run analyzer tests
+        run: |
+          cd agents/zopai-config-optimizer
+          python test_analyzer.py
