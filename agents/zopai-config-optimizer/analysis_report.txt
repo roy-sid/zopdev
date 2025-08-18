@@ -1,0 +1,8 @@
+ZopAI Config Optimizer Report
+========================================
+
+WARNING! Security: runAsRoot detected → set runAsNonRoot=true, runAsUser=1000
+WARNING! Resources: Missing CPU/memory → added default requests/limits
+WARNING! Reliability: Missing livenessProbe → added basic HTTP probe on /:80
+WARNING! Reliability: Missing readinessProbe → added basic HTTP probe on /:80
+WARNING! RBAC: Missing or disabled → set rbac.create=true

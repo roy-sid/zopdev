@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zopai-config-optimizer
+  labels:
+    app: zopai-config-optimizer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zopai-config-optimizer
+  template:
+    metadata:
+      labels:
+        app: zopai-config-optimizer
+    spec:
+      containers:
+      - name: zopai-config-optimizer
+        image: siddhantroy/zopai-config-optimizer:latest   # <-- Docker Hub image
+        ports:
+        - containerPort: 8000

@@ -1,0 +1,8 @@
+securityContext:
+  runAsUser: 0   # runs as root (bad)
+
+# no resource limits here
+# no probes here
+
+rbac:
+  create: false
