@@ -265,3 +265,6 @@ This project is part of **Zopdev Summer of Code 2025** and follows the program's
 
 ---
 
+
+---
+✅ Integrated with Zopdev platform (Summer of Code 2025)
