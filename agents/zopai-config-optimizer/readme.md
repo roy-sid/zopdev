@@ -126,7 +126,7 @@ kubectl apply -f k8s/service.yaml
 
 ---
 
-## 📊 Example Analysis
+##  Example Analysis
 
 ### **Input** (`values.yaml`)
 ```yaml
