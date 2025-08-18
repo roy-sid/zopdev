@@ -202,6 +202,11 @@ export GOOGLE_API_KEY="your-gemini-api-key"
 - **Minimum:** 0 points
 
 ---
+
+📂 **Outputs** → [outputs/](outputs/)  
+Contains all optimized values and generated reports (HTML + PDF)
+
+---
 ## 📸 Screenshots
 
 ### Docker Containers
