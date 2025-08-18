@@ -202,6 +202,21 @@ export GOOGLE_API_KEY="your-gemini-api-key"
 - **Minimum:** 0 points
 
 ---
+## 📸 Screenshots
+
+### Docker Containers
+![Docker ps](screenshots/docker_ps.png)
+
+### HTML Report
+![HTML Report](screenshots/html_report.png)
+
+### PDF Report
+![PDF Report](screenshots/pdf_report.png)
+
+### Swagger UI
+![Swagger UI](screenshots/swagger_ui.png)`
+
+---
 
 ## 🛡️ Security Checks
 
