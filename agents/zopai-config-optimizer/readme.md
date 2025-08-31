@@ -69,21 +69,277 @@ zopai-config-optimizer/
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started & Testing
 
-### 🔧 **CLI Mode**
+### Prerequisites
+- Python 3.8+ installed
+- Git installed
+- (Optional) Docker installed for containerized deployment
+- (Optional) Google API Key for AI recommendations
 
+### 📦 Installation
+
+1. **Clone the repository:**
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+git clone https://github.com/roy-sid/zopai-config-optimizer.git
+cd zopai-config-optimizer
+```
 
-# Run analysis on sample config
+2. **Install Python dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+3. **(Optional) Set up AI recommendations:**
+```bash
+# Linux/macOS
+export GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY_HERE
+
+# Windows CMD
+set GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY_HERE
+
+# Windows PowerShell
+$env:GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY_HERE"
+```
+
+---
+
+### 🧪 Testing the Application
+
+#### **Method 1: CLI Mode Testing**
+
+**Test with the provided sample file:**
+```bash
+# Run analysis on the included values.yaml sample
 python test_analyzer.py
 ```
 
-**Generates:**
-- `optimized_values.yaml` - Auto-corrected configuration
-- `analysis_report.txt` - Detailed analysis summary
+**Expected Output:**
+```
+✅ Analysis complete!
+📁 Generated files in outputs/:
+  - optimized_values.yaml (Auto-corrected config)
+  - analysis_report.txt (Detailed analysis)
+  - analysis_report.pdf (Professional PDF report)
+  - analysis_report.html (Interactive web report)
+
+Config Health Score: XX/100
+```
+
+**Verify generated files:**
+```bash
+ls -la outputs/
+cat outputs/analysis_report.txt
+```
+
+#### **Method 2: API Mode Testing**
+
+**Step 1: Start the FastAPI server**
+```bash
+uvicorn zopai_api:app --reload
+```
+
+**Step 2: Open Swagger UI in browser**
+```
+http://127.0.0.1:8000/docs
+```
+
+**Step 3: Test via curl commands**
+```bash
+# Upload and analyze the sample values.yaml
+curl -X POST "http://127.0.0.1:8000/analyze" \
+     -H "accept: application/json" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@values.yaml"
+
+# Download the optimized configuration
+curl -X GET "http://127.0.0.1:8000/download/optimized" \
+     --output test_optimized_values.yaml
+
+# Download text report
+curl -X GET "http://127.0.0.1:8000/download/report" \
+     --output test_analysis_report.txt
+
+# Download PDF report
+curl -X GET "http://127.0.0.1:8000/download/pdf" \
+     --output test_analysis_report.pdf
+
+# Download HTML report
+curl -X GET "http://127.0.0.1:8000/download/html" \
+     --output test_analysis_report.html
+```
+
+**Step 4: Test with your own values.yaml**
+```bash
+# Replace 'your-values.yaml' with your actual file
+curl -X POST "http://127.0.0.1:8000/analyze" \
+     -F "file=@your-values.yaml"
+```
+
+#### **Method 3: Docker Testing**
+
+**Step 1: Build the Docker image**
+```bash
+docker build -t zopai-config-optimizer .
+```
+
+**Step 2: Run the container**
+```bash
+docker run -d -p 8000:8000 --name zopai-test zopai-config-optimizer
+```
+
+**Step 3: Verify the container is running**
+```bash
+docker ps
+```
+
+**Step 4: Test the dockerized API**
+```bash
+# Test health endpoint
+curl http://localhost:8000/
+
+# Upload sample file to dockerized instance
+curl -X POST "http://localhost:8000/analyze" \
+     -F "file=@values.yaml"
+```
+
+**Step 5: Clean up**
+```bash
+docker stop zopai-test
+docker rm zopai-test
+```
+
+#### **Method 4: Kubernetes Testing**
+
+**Prerequisites:** kubectl configured with access to a Kubernetes cluster
+
+**Step 1: Update the image in deployment.yaml**
+```bash
+# Edit k8s/deployment.yaml and replace image with your registry
+# Example: your-registry/zopai-config-optimizer:latest
+```
+
+**Step 2: Build and push to your registry**
+```bash
+docker tag zopai-config-optimizer <your-registry>/zopai-config-optimizer:latest
+docker push <your-registry>/zopai-config-optimizer:latest
+```
+
+**Step 3: Deploy to Kubernetes**
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
+
+**Step 4: Verify deployment**
+```bash
+kubectl get pods
+kubectl get services
+```
+
+**Step 5: Test the service**
+```bash
+# Get the NodePort
+kubectl get service zopai-config-optimizer-service
+
+# Test via NodePort (replace <node-ip> and <node-port>)
+curl -X POST "http://<node-ip>:<node-port>/analyze" \
+     -F "file=@values.yaml"
+```
+
+---
+
+### 🧪 Creating Your Own Test Cases
+
+**Create a test values.yaml with intentional issues:**
+```yaml
+# test-insecure-values.yaml
+securityContext:
+  runAsUser: 0              # Security issue: running as root
+  
+rbac:
+  create: false             # Security issue: RBAC disabled
+
+replicaCount: 1
+image:
+  repository: nginx
+  tag: latest
+
+# Missing: resource limits, health probes
+```
+
+**Test this file:**
+```bash
+# CLI mode
+cp test-insecure-values.yaml values.yaml
+python test_analyzer.py
+
+# API mode
+curl -X POST "http://127.0.0.1:8000/analyze" \
+     -F "file=@test-insecure-values.yaml"
+```
+
+---
+
+### 🔍 Expected Test Results
+
+When testing with the provided sample or an insecure configuration, you should see:
+
+**1. Analysis Report showing warnings like:**
+```
+WARNING! runAsRoot detected
+WARNING! Missing resource limits
+WARNING! Missing health probes
+WARNING! RBAC disabled
+```
+
+**2. Optimized values.yaml with fixes:**
+```yaml
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+rbac:
+  create: true
+```
+
+**3. Health Score:** Should be less than 100 for configs with issues, 100 for optimal configs.
+
+**4. AI Recommendations:** (If GOOGLE_API_KEY is set) Context-aware suggestions for improvements.
+
+---
+
+### 🐛 Troubleshooting
+
+**Common Issues and Solutions:**
+
+| Issue | Solution |
+|-------|----------|
+| `ModuleNotFoundError` | Run `pip install -r requirements.txt` |
+| `Port 8000 already in use` | Use `uvicorn zopai_api:app --port 8001` |
+| `Permission denied` on Docker | Use `sudo docker` or add user to docker group |
+| `AI suggestions not working` | Ensure `GOOGLE_API_KEY` environment variable is set |
+| `outputs/ directory not created` | Run CLI mode first: `python test_analyzer.py` |
+
+**Debug mode:**
+```bash
+# Run with verbose output
+uvicorn zopai_api:app --reload --log-level debug
+```
 
 ---
 
@@ -127,7 +383,7 @@ Upload your `values.yaml` or send JSON. AI recommendations will now appear in th
 
 ---
 
-## 🌐 **API Mode**
+## 🌐 **API Reference**
 
 ```bash
 # Start the FastAPI server
@@ -156,33 +412,6 @@ curl -X POST "http://127.0.0.1:8000/analyze" \
 # Download optimized configuration
 curl -X GET "http://127.0.0.1:8000/download/optimized" \
      -o optimized_values.yaml
-```
-
----
-
-### 🐳 **Docker Deployment**
-
-```bash
-# Build image
-docker build -t zopai-config-optimizer .
-
-# Run container
-docker run -d -p 8000:8000 zopai-config-optimizer
-```
-
-### ☸️ **Kubernetes Deployment**
-
-```bash
-# Build and push to registry
-docker tag zopai-config-optimizer <your-registry>/zopai-config-optimizer:latest
-docker push <your-registry>/zopai-config-optimizer:latest
-
-# Deploy to cluster
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-
-# Access via NodePort
-# http://<node-ip>:30080/docs
 ```
 
 ---
@@ -319,11 +548,7 @@ google-generativeai==0.8.5 # AI suggestions
 
 ---
 
-## 📄 License
 
-This project is part of **Zopdev Summer of Code 2025** and follows the program's licensing terms.
-
----
 
 ## 👨‍💻 Author
 
@@ -334,14 +559,6 @@ This project is part of **Zopdev Summer of Code 2025** and follows the program's
 
 ---
 
-## 🎯 Roadmap
-
-- [ ] Support for multiple YAML file analysis
-- [ ] Custom rule configuration
-- [ ] Integration with popular CI/CD pipelines
-- [ ] Advanced security vulnerability scanning
-- [ ] Helm chart validation
-- [ ] Multi-cloud provider optimizations
 
 ---
 
