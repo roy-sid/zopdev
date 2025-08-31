@@ -81,8 +81,9 @@ zopai-config-optimizer/
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/roy-sid/zopai-config-optimizer.git
-cd zopai-config-optimizer
+git clone https://github.com/roy-sid/zopdev.git
+cd zopdev
+cd agents/zopai-config-optimizer
 ```
 
 2. **Install Python dependencies:**
@@ -90,7 +91,7 @@ cd zopai-config-optimizer
 pip install -r requirements.txt
 ```
 
-3. **(Optional) Set up AI recommendations:**
+3. **Set up AI recommendations:**
 ```bash
 # Linux/macOS
 export GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY_HERE
