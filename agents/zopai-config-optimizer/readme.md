@@ -559,7 +559,3 @@ google-generativeai==0.8.5 # AI suggestions
 
 ---
 
-
----
-
-✅ Integrated with Zopdev platform (Summer of Code 2025)
